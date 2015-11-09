@@ -11,78 +11,46 @@ use JSON;
 my $api_url    = 'http://notify.alertops.com';
 my $api_path   = '/RESTAPI.svc/POSTAlertv2/generic/';
 
-my $opts;
+my %opts;
 
-GetOptions('object=s' => \$opts->{object});
-my $object = $opts->{object};
+GetOptions('source=s'      => \$opts{source}, 
+           'source_name=s' => \$opts{source_name},
+           'subject=s'     => \$opts{subject},
+           'status=s'      => \$opts{status},
+           'incident=s'    => \$opts{incident},
+           'severity=s'    => \$opts{severity},
+           'url=s'         => \$opts{url},
+           'short_text=s'  => \$opts{short_text},
+           'long_text=s'   => \$opts{long_text},
+           'assignee=s'    => \$opts{assignee},
+           'debug'         => \$opts{debug})
+or die("Error parsing command line options\n");
 
-sub getEnvs {
-  my %envs;
+my $source = $opts{source};
+delete $opts{source} or die ('Argument "source" is required');
 
-  while ((my $k, my $v) = each %ENV) {
-    next unless $k =~ /^ALERTOPS_(.*)$/;
-    $envs{$1} = $v;
-  }
+my $source_name = $opts{source_name};
+die('Argument "source_name" is required') if not $source_name;
 
-  return %envs;
-}
+my $subject = $opts{subject};
+die('Argument "source" is required') if not $subject;
 
-my %data = getEnvs;
+my $api_key = $ENV{ALERTOPS_CONTACTPAGER};
+die('Environment variable "ALERTOPS_CONTACTPAGER" is required') if not $api_key;
 
-my $api_key = $data{'CONTACTPAGER'}; # API KEY
-
-my $state = $data{'HOSTSTATE'};
-$state = $data{'SERVICESTATE'} if ($object eq 'service');
-
-my %json_hash = ('subject', $data{'SUBJECT'});
-
-my $incident_key = 'NONE';
-if ($data{'INCIDENT'}) {
-	$incident = 'incident';
-	$json_hash{'incident'} = $data{'INCIDENT'};
-}
-
-my $severity_key = 'NONE';
-if ($data{'SEVERITY'}) {
-	$severity = 'severity';
-	$json_hash{'severity'} = $data{'SEVERITY'};
-}
-
-my $url_key = 'NONE';
-if ($data{'URL'}) {
-	$url_key = 'url';
-	$json_hash{'url'} = $data{'URL'};
-}
-
-my $short_text = 'NONE';
-if ($data{'SHORTMSG'}) {
-	$short_text = 'short_text';
-	$json_hash{'short_text'} = $data{'SHORTMSG'};
-}
-
-my $long_text = 'NONE';
-if ($data{'LONGMSG'}) {
-	$long_text = 'long_text';
-	$json_hash{'long_text'} = $data{'LONGMSG'};
-}
-
-my $assignee_key = 'NONE';
-if ($data{'ASSIGNEE'}) {
-	$url_key = 'assignee';
-	$json_hash{'assignee'} = $data{'ASSIGNEE'};
-}
+my $debug = delete $opts{debug};
 
 my @params = (
-  'Icinga',           # Soure
-  'Icinga',           # Source Name
-  'subject',          # Subject key
-  $incident_key,      # Incident id key
-  $state,             # Status key
-  $severity_key,      # Severity key
-  $url_key,           # Url key
-  $short_text,        # Short text key
-  $long_text,         # Long text key
-  $assignee_key       # Assignee key
+  $source,                                   # Soure
+  "source_name",                             # Source Name
+  "subject",                                 # Subject key
+  $opts{incident}   ? "incident"   : "NONE", # Incident id key
+  $opts{status}     ? "status"     : "NONE", # Status key
+  $opts{severity}   ? "severity"   : "NONE", # Severity key
+  $opts{url}        ? "url"        : "NONE", # Url key
+  $opts{short_text} ? "short_text" : "NONE", # Short text key
+  $opts{long_text}  ? "long_text"  : "NONE", # Long text key
+  $opts{assignee}   ? "assignee"   : "NONE"  # Assignee key
 );
 
 my $fields;
@@ -91,15 +59,18 @@ for my $param (@params) {
   $fields .= "/$param";
 }
 
-my $json = encode_json \%json_hash;
+my $json = encode_json \%opts;
 my $req = POST($api_url . $api_path . $api_key . $fields);
+
 $req->header( 'Content-Type' => 'application/json' );
 $req->content( $json );
 
 my $ua = LWP::UserAgent->new;
 my $resp = $ua->request($req);
 
-print Dumper $req;
-print "\n- - - -\n";
-print Dumper $resp;
-print "\n- - - -\n";
+if ($debug) {
+  print Dumper $req;
+  print "\n- - - -\n";
+  print Dumper $resp;
+  print "\n- - - -\n";
+}
