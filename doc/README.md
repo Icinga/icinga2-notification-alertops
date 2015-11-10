@@ -19,16 +19,18 @@
 
 # AlertOps Icinga 2 Integration
 
-Icinga 2 can send alerts to AlertOps using the Generic REST API.
+Icinga 2 can send alerts to AlertOps using the [Generic REST API](http://help.alertops.com/default.aspx/MyWiki/Generic%20REST%20API.html).
 AlertOps will open a new incident when an alert is received from Icinga.
 AlertOps will close the same incident when it recovers.
 
 ## Icinga 2 Configuration
-Consult the Icinga 2 documentation for more information on how to configure a
-Notification in Icinga 2.
+Consult the [Icinga 2 documentation](http://docs.icinga.org/icinga2/latest/doc)
+for more information on how to configure a [Notification](http://docs.icinga.org/icinga2/latest/doc/module/icinga2/chapter/monitoring-basics#notifications)
+in Icinga 2.
 
 ## AlertOps Configuration
 Refer to the Generic REST API topic for detauls on configuration options for
 Mapping Rules.
 
-(see screenshots)
+_see screenshots_
+
