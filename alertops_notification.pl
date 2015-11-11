@@ -18,16 +18,25 @@
 # Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
 ##
 
+use version; our $VERSION = qv("1.0");
+
 use HTTP::Request::Common qw(POST);
 use LWP::UserAgent;
 use Data::Dumper;
 use Getopt::Long;
 use JSON;
+use Pod::Usage;
+
+use strict;
+use warnings;
 
 my $api_url    = 'http://notify.alertops.com';
 my $api_path   = '/RESTAPI.svc/POSTAlertv2/generic/';
 
 my %opts;
+my $timeout = 180;
+my $debug;
+my $help;
 
 GetOptions('source=s'      => \$opts{source}, 
            'source_name=s' => \$opts{source_name},
@@ -39,22 +48,25 @@ GetOptions('source=s'      => \$opts{source},
            'short_text=s'  => \$opts{short_text},
            'long_text=s'   => \$opts{long_text},
            'assignee=s'    => \$opts{assignee},
-           'debug'         => \$opts{debug})
-or die("Error parsing command line options\n");
+           'timeout=i'     => \$timeout,
+           'help|?'        => \$help,
+           'debug'         => \$debug)
+or pod2usage("Error parsing command line options\n");
+
+pod2usage(1) if $help;
 
 my $source = $opts{source};
-delete $opts{source} or die ('Argument "source" is required');
+delete $opts{source} or pod2usage ('Argument "source" is required');
 
 my $source_name = $opts{source_name};
-die('Argument "source_name" is required') if not $source_name;
+pod2usage ('Argument "source_name" is required') if not $source_name;
 
 my $subject = $opts{subject};
-die('Argument "source" is required') if not $subject;
+pod2usage ('Argument "subject" is required') if not $subject;
 
 my $api_key = $ENV{ALERTOPS_CONTACTPAGER};
-die('Environment variable "ALERTOPS_CONTACTPAGER" is required') if not $api_key;
-
-my $debug = delete $opts{debug};
+pod2usage ('Environment variable "ALERTOPS_CONTACTPAGER" is required')
+if not $api_key;
 
 my @params = (
   $source,                                   # Soure
@@ -69,24 +81,55 @@ my @params = (
   $opts{assignee}   ? "assignee"   : "NONE"  # Assignee key
 );
 
-my $fields;
-
-for my $param (@params) {
-  $fields .= "/$param";
-}
+my $fields = join('/', @params);
 
 my $json = encode_json \%opts;
-my $req = POST($api_url . $api_path . $api_key . $fields);
+my $req = POST(join('', $api_url, $api_path, $api_key, $fields));
 
-$req->header( 'Content-Type' => 'application/json' );
-$req->content( $json );
+$req->header('Content-Type' => 'application/json');
+$req->content($json);
 
 my $ua = LWP::UserAgent->new;
+$ua->agent("AlertOps Icinga2 NotificationCommand/$VERSION");
+$ua->timeout($timeout);
+
 my $resp = $ua->request($req);
 
 if ($debug) {
-  print Dumper $req;
   print "\n- - - -\n";
+  print Dumper $req;
+  print "\n- - - - - - - -\n";
   print Dumper $resp;
   print "\n- - - -\n";
 }
+
+print ('Request failed with code ' . $resp->code . "\n") and exit 2 if ($resp->is_error);
+
+__END__
+=head1 NAME
+
+AlertOps Icinga2 NotificationCommand
+
+=head1 SYNOPSIS
+
+./alertops_notification.pl [options]
+
+  **NOTE** It is required to have the environment variable ALERTOPS_CONTACTPAGER
+  set to valid AlertOps API key.
+
+  Options:
+     -source         **REQUIRED** Notification source (Icinga 2)
+     -source_name    **REQUIRED** Source name (ex "production")
+     -subject        **REQUIRED** Subject to match AlertOps inbound rule to
+                                  (ex "icinga2_alert")
+     -status         The Host (UP, DOWN) or Services (OK, WARNING, CRITICAL)
+                     exit status
+     -incident       An incident reference id
+     -severity       AlertOps severity
+     -url            A reference URL
+     -short_text     Short text describing the issue
+     -long_text      A long text describing the issue more verbosely
+     -assignee       Name of a AlertOps user
+     -timeout        Timeout for the HTTP-REST request, default 180
+     -help|?         Print this help message 
+     -debug          Debug mode
