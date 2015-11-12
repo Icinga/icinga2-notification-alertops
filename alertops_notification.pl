@@ -105,6 +105,8 @@ if ($debug) {
 
 print ('Request failed with code ' . $resp->code . "\n") and exit 2 if ($resp->is_error);
 
+exit 0;
+
 __END__
 =head1 NAME
 
@@ -118,18 +120,18 @@ AlertOps Icinga2 NotificationCommand
   set to valid AlertOps API key.
 
   Options:
-     -source         **REQUIRED** Notification source (Icinga 2)
-     -source_name    **REQUIRED** Source name (ex "production")
-     -subject        **REQUIRED** Subject to match AlertOps inbound rule to
-                                  (ex "icinga2_alert")
-     -status         The Host (UP, DOWN) or Services (OK, WARNING, CRITICAL)
-                     exit status
-     -incident       An incident reference id
-     -severity       AlertOps severity
-     -url            A reference URL
-     -short_text     Short text describing the issue
-     -long_text      A long text describing the issue more verbosely
-     -assignee       Name of a AlertOps user
-     -timeout        Timeout for the HTTP-REST request, default 180
-     -help|?         Print this help message 
-     -debug          Debug mode
+     --source         **REQUIRED** Notification source (Icinga 2)
+     --source_name    **REQUIRED** Source name (ex "production")
+     --subject        **REQUIRED** Subject to match AlertOps inbound rule to
+                                   (ex "icinga2_alert")
+     --status         The Host (UP, DOWN) or Services (OK, WARNING, CRITICAL)
+                      exit status
+     --incident       An incident reference id
+     --severity       AlertOps severity
+     --url            A reference URL
+     --short_text     Short text describing the issue
+     --long_text      A long text describing the issue more verbosely
+     --assignee       Name of a AlertOps user
+     --timeout        Timeout for the HTTP-REST request, default 180
+     --help|?         Print this help message 
+     --debug          Debug mode
