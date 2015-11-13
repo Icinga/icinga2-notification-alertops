@@ -84,7 +84,7 @@ my @params = (
 my $fields = join('/', @params);
 
 my $json = encode_json \%opts;
-my $req = POST(join('', $api_url, $api_path, $api_key, $fields));
+my $req = POST($api_url . $api_path . $api_key . $fields);
 
 $req->header('Content-Type' => 'application/json');
 $req->content($json);
