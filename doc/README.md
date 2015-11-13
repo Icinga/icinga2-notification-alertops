@@ -1,23 +1,23 @@
-/******************************************************************************
- * AlertOps Notification Command                                              *
- * Copyright (C) 2015 Icinga Development Team (http://www.icinga.org)         *
- *                                                                            *
- * This program is free software; you can redistribute it and/or              *
- * modify it under the terms of the GNU General Public License                *
- * as published by the Free Software Foundation; either version 2             *
- * of the License, or (at your option) any later version.                     *
- *                                                                            *
- * This program is distributed in the hope that it will be useful,            *
- * but WITHOUT ANY WARRANTY; without even the implied warranty of             *
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the              *
- * GNU General Public License for more details.                               *
- *                                                                            *
- * You should have received a copy of the GNU General Public License          *
- * along with this program; if not, write to the Free Software Foundation     *
- * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.             *
- ******************************************************************************/
-
 # AlertOps Icinga 2 Integration
+
+## Prerequisites
+
+### Perl packages
+
+This libraries are used by this notification command:
+
+* HTTP::Request::Common
+* LWP::UserAgent
+* JSON
+
+If you using debian for example, install the following packages:
+
+    # apt-get install -y libhttp-message-perl libwww-perl libjson-perl
+
+There is a cpan minus dependencies file in the root filter (cpanfile). You can
+install the dependencies with the following command:
+
+    # cpanm --verbose --installdeps .
 
 Icinga 2 can send alerts to AlertOps using the [Generic REST API](http://help.alertops.com/default.aspx/MyWiki/Generic%20REST%20API.html).
 AlertOps will open a new incident when an alert is received from Icinga.
