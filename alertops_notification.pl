@@ -30,7 +30,7 @@ use Pod::Usage;
 use strict;
 use warnings;
 
-my $api_url    = 'http://notify.alertops.com';
+my $api_url    = 'https://notify.alertops.com';
 my $api_path   = '/RESTAPI.svc/POSTAlertv2/generic/';
 
 my %opts;
@@ -64,7 +64,7 @@ pod2usage ('Argument "source_name" is required') if not $source_name;
 my $subject = $opts{subject};
 pod2usage ('Argument "subject" is required') if not $subject;
 
-my $api_key = $ENV{ALERTOPS_CONTACTPAGER};
+my $api_key = $ENV{ALERTOPS_CONTACTPAGER} . "/";
 pod2usage ('Environment variable "ALERTOPS_CONTACTPAGER" is required')
 if not $api_key;
 
@@ -87,6 +87,7 @@ my $json = encode_json \%opts;
 my $req = POST($api_url . $api_path . $api_key . $fields);
 
 $req->header('Content-Type' => 'application/json');
+$req->header('Content-Length' => length($json));
 $req->content($json);
 
 my $ua = LWP::UserAgent->new;
