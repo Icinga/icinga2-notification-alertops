@@ -64,8 +64,8 @@ pod2usage ('Argument "source_name" is required') if not $source_name;
 my $subject = $opts{subject};
 pod2usage ('Argument "subject" is required') if not $subject;
 
-my $api_key = $ENV{ALERTOPS_CONTACTPAGER} . "/";
-pod2usage ('Environment variable "ALERTOPS_CONTACTPAGER" is required')
+my $api_key = $ENV{ALERTOPS_APIKEY} . "/";
+pod2usage ('Environment variable "ALERTOPS_APIKEY" is required')
 if not $api_key;
 
 my @params = (
@@ -117,7 +117,7 @@ AlertOps Icinga2 NotificationCommand
 
 ./alertops_notification.pl [options]
 
-  **NOTE** It is required to have the environment variable ALERTOPS_CONTACTPAGER
+  **NOTE** It is required to have the environment variable ALERTOPS_APIKEY
   set to valid AlertOps API key.
 
   Options:
