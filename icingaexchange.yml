@@ -1,0 +1,18 @@
+name: alertops_notification
+description: "file:///README.md"
+url: "https://github.com/Icinga/icinga2-notification-alertops"
+tags: AlertOps
+vendor: Linux, Icinga
+target: Mail, Messaging, SMS
+type: Notification, Notification Command
+license: gplv2
+releases: 
+  - 
+    name: 1.0
+    description: "1.0 Release"
+    files: 
+      - 
+        name: alertops_notification.pl
+        url: "file:///alertops_notification.pl"
+        description: "Icinga2 AlertOps Integration"
+        checksum: e6211524011821251a784d359832324b
