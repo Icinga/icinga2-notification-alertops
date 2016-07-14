@@ -33,7 +33,7 @@ Next, check out this GitHub repository and change into the
 `icinga2-notification-alertops` directory:
 
 ```
-   # cd ~/Downloads
+   # cd ~
    # git clone https://github.com/Icinga/icinga2-notification-alertops.git
    # cd icinga2-notification-alertops
 ```
@@ -93,10 +93,10 @@ Learn more about user objects in the [Icinga 2 Docs](http://docs.icinga.org/icin
 
 The notification command defines the location and parameters of
 this script. The variables you enter here will be used in in the
-notification rules ([AlertOps configuration](README.md#alert-ops-config)) later.
+notification rules ([Notification configuration](README.md#notifications-config)) later.
 This command expects the notification script `alertops_notification.pl` in the directory `/etc/icinga2/scripts`: 
 
-    # cp ~/Downloads/icinga2-notification-alertops/alertops_notification.pl /etc/icinga2/scripts/
+    # cp ~/icinga2-notification-alertops/alertops_notification.pl /etc/icinga2/scripts/
 
 The configuration for the `NotificationCommand` can look like this:
 
@@ -126,7 +126,7 @@ object NotificationCommand "alertops-notification" {
 
 Learn more about the NotificationCommand object in the [Icinga 2 Docs](http://docs.icinga.org/icinga2/latest/doc/module/icinga2/chapter/object-types#objecttype-notificationcommand).
 
-### Notifications
+### <a id="notifications-config"></a> Notifications
 
 Next, create the two `Notification` objects, one for hosts and one for
 services. Define the command that sends out the notifications, the
