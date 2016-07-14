@@ -29,6 +29,10 @@ If you're running openSUSE, install the following packages:
 
     # zypper install perl-App-cpanminus perl-JSON
 
+On CentOS install the following packages plus dependencies:
+
+    # yum install perl-libwww-perl perl-App-cpanminus
+
 Next, check out this GitHub repository and change into the
 `icinga2-notification-alertops` directory:
 
@@ -40,7 +44,7 @@ Next, check out this GitHub repository and change into the
 
 There is a `cpanminus` script (`cpanfile`) that contains a list of
 all Perl dependencies. Use the following command to check for missing
-CPAN modules and to install them:
+CPAN modules and to install them in one go:
 
     # cpanm --verbose --installdeps .
 
@@ -49,12 +53,11 @@ CPAN modules and to install them:
 > **Note**
 >
 > If you see an error message like `Can't locate Parse/PMFile.pm` on
-> openSUSE, you've run into [this
+> openSUSE Leap 42.1, you've probably run into [this
 > bug](https://bugzilla.suse.com/show_bug.cgi?id=983472). One solution
 > is to fetch the missing module from the [CPAN server](http://www.cpan.org/authors/id/I/IS/ISHIGAKI/Parse-PMFile-0.40.tar.gz),
-> unpack it and copy the file `PMFile.pm` to `/usr/lib/perl5/5.18.2/Parse`.
+> unpack the archive and copy the file `PMFile.pm` manually to `/usr/lib/perl5/5.18.2/Parse`.
 > Next, run the `cpanm` command again.
-
 
 ## Icinga 2 Configuration
 
@@ -62,7 +65,7 @@ Change into the `/etc/icinga2/conf.d` directory and create a new
 configuration file, e.g. `alertops.conf`. Define a user object, a
 notification command, two `Notification` objects (one for hosts and
 one for services). (Alternatively, you can add the snippets to the
-corresponding files on your installation.)
+corresponding files on your Icinga 2 installation.)
 
 ### User object
 
@@ -93,8 +96,10 @@ Learn more about user objects in the [Icinga 2 Docs](http://docs.icinga.org/icin
 
 The notification command defines the location and parameters of
 this script. The variables you enter here will be used in in the
-notification rules ([Notification configuration](README.md#notifications-config)) later.
-This command expects the notification script `alertops_notification.pl` in the directory `/etc/icinga2/scripts`: 
+notification rules later (see [Notification
+configuration](README.md#notifications-config)). This command
+expects the notification script `alertops_notification.pl` in the
+directory `/etc/icinga2/scripts`:
 
     # cp ~/icinga2-notification-alertops/alertops_notification.pl /etc/icinga2/scripts/
 
